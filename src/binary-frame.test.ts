@@ -17,7 +17,7 @@ describe("binary file-chunk frames", () => {
 
   it("refuses to encode anything outside the limits", () => {
     expect(() => encodeFileChunk("short", 0, ciphertext(17))).toThrow();
-    expect(() => encodeFileChunk(id, 131_072, ciphertext(17))).toThrow();
+    expect(() => encodeFileChunk(id, 1_048_576, ciphertext(17))).toThrow();
     expect(() => encodeFileChunk(id, 131_071, ciphertext(17))).not.toThrow();
     expect(() => encodeFileChunk(id, -1, ciphertext(17))).toThrow();
     expect(() => encodeFileChunk(id, 0, ciphertext(16))).toThrow();
@@ -32,7 +32,7 @@ describe("binary file-chunk frames", () => {
     expect(() => decodeBinaryFrame(tamper(2, 9))).toThrow("Unknown binary frame type");
     expect(() => decodeBinaryFrame(tamper(3, 200))).toThrow("Invalid binary frame header");
     expect(() => decodeBinaryFrame(tamper(5, 0x20))).toThrow("Invalid binary frame header"); // a space inside the ID
-    const index = good.slice(); new DataView(index.buffer).setUint32(4 + id.length, 131_072, false);
+    const index = good.slice(); new DataView(index.buffer).setUint32(4 + id.length, 1_048_576, false);
     expect(() => decodeBinaryFrame(index.buffer)).toThrow("out of range");
     expect(() => decodeBinaryFrame(new ArrayBuffer(10))).toThrow("size is out of range");
     expect(() => decodeBinaryFrame(new ArrayBuffer(300_000))).toThrow("size is out of range");

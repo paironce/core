@@ -14,8 +14,10 @@ const iceCandidateSchema = z.object({
   usernameFragment: z.string().max(256).nullable().optional(),
 });
 
-/** 2 GB in the smallest chunks allowed (16 KiB) needs 122,071 chunks; this is the next power of two. */
-export const MAX_FILE_CHUNKS = 131_072;
+/** 10 GB (the Pro limit) in the smallest chunks allowed (16 KiB) needs 610,352 chunks; this is the next power of two. */
+export const MAX_FILE_CHUNKS = 1_048_576;
+/** The largest file the formats describe: 10 GB, for transfers where one of the two devices has Pro (hugeFiles). */
+export const MAX_FILE_BYTES = 10_000_000_000;
 
 const helloSchema = z.object({
   v: z.literal(PROTOCOL_VERSION),
@@ -45,6 +47,12 @@ const helloSchema = z.object({
   // This side reports how far it has handled an incoming file and keeps a sender within its receive window
   // (receive-window.ts). Optional for the same reason: without it in both hellos neither side changes.
   receiveWindow: z.literal(1).optional(),
+  // This side writes files to disk and takes offers above 2 GB, up to MAX_FILE_BYTES, when its storage has room. Optional
+  // like the flags above: a peer that predates it drops the key and is never offered more than 2 GB.
+  hugeFiles: z.literal(1).optional(),
+  // This device has PairOnce Pro. Files over 2 GB need Pro on one of the two devices; a direct transfer costs the service
+  // nothing, so this is a plan boundary and the sender checks it.
+  pro: z.literal(1).optional(),
 });
 
 export const signalMessageSchema = z.discriminatedUnion("type", [
@@ -103,9 +111,9 @@ export const dataFrameSchema = z.discriminatedUnion("type", [
     transferId: idSchema,
     name: z.string().min(1).max(512),
     mime: z.string().max(256),
-    // Up to 2 GB. The session holds each file to the limit it
+    // Up to 10 GB (MAX_FILE_BYTES). The session holds each file to the limit it
     // announced: 50 MiB unless it writes large files to disk; this schema only bounds what can be parsed.
-    size: z.number().int().nonnegative().max(2_000_000_000),
+    size: z.number().int().nonnegative().max(MAX_FILE_BYTES),
     chunkSize: z.number().int().min(16 * 1024).max(64 * 1024),
     totalChunks: z.number().int().positive().max(MAX_FILE_CHUNKS),
     noncePrefix: encodedBytesSchema,
