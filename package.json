@@ -1,6 +1,6 @@
 {
   "name": "@paironce/core",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "PairOnce core: frame encryption, pairing cryptography and file-transfer framing used by paironce.com.",
   "license": "Apache-2.0",
   "type": "module",
@@ -28,7 +28,7 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "zod": "^4.1.5"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
