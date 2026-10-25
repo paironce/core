@@ -10,7 +10,7 @@ export interface ChunkContext {
   channel?: {
     sender: "host" | "join";
     frameType: "text" | "file-chunk" | "file-preview" | "file-offer" | "file-decision" | "file-cancel" | "file-receipt"
-      | "file-progress" | "pair-claim" | "pair-result" | "pair-confirm";
+      | "file-progress" | "pair-claim" | "pair-result" | "pair-confirm" | "live";
   };
 }
 function webCrypto(): Crypto {

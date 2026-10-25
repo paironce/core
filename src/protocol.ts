@@ -53,6 +53,9 @@ const helloSchema = z.object({
   // This device has PairOnce Pro. Files over 2 GB need Pro on one of the two devices; a direct transfer costs the service
   // nothing, so this is a plan boundary and the sender checks it.
   pro: z.literal(1).optional(),
+  // This side can show and watch a live picture (camera or screen) over this connection, set up by encrypted `live`
+  // frames. Optional like the flags above: a peer that predates it drops the key and is never sent a `live` frame.
+  liveMedia: z.literal(1).optional(),
 });
 
 export const signalMessageSchema = z.discriminatedUnion("type", [
@@ -97,6 +100,9 @@ export const dataFrameSchema = z.discriminatedUnion("type", [
   encryptedControlSchema.extend({ type: z.literal("file-progress") }),
   // A small JPEG in a JSON envelope (offer-preview-v1): larger than the other control frames, still tiny.
   encryptedControlSchema.extend({ type: z.literal("file-preview"), plainSize: z.number().int().positive().max(24 * 1024) }),
+  // Live picture set-up (live-media.ts): requests, answers, the renegotiation description and the DTLS fingerprint
+  // check. Sent only to a peer whose hello carried liveMedia; a description is larger than the other control frames.
+  encryptedControlSchema.extend({ type: z.literal("live"), plainSize: z.number().int().positive().max(32 * 1024) }),
   z.object({
     v: z.literal(PROTOCOL_VERSION),
     type: z.literal("text"),
