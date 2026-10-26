@@ -3,7 +3,7 @@
 PairOnce — browser-to-browser file transfer between your devices. No app, no account, files never stored on a server.
 
 This is the part of [PairOnce](https://paironce.com) that encrypts and moves your files, published so that the privacy
-claims can be checked rather than believed. paironce.com 2.13.2 runs exactly this code.
+claims can be checked rather than believed. paironce.com 2.13.3 runs exactly this code.
 
 | Module | What it does |
 | --- | --- |
@@ -27,7 +27,7 @@ npm run typecheck
 ```
 
 The package exports TypeScript source (`src/index.ts`) and needs Web Crypto (current browsers, Node 20+, Workers).
-It is not on npm yet; depend on this repository by tag (`github:paironce/core#v2.13.2`).
+It is not on npm yet; depend on this repository by tag (`github:paironce/core#v2.13.3`).
 
 ## Versions
 

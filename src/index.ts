@@ -1,5 +1,5 @@
 /**
- * @paironce/core 2.13.2: what the PairOnce protocol needs on each device, with no user interface and no service.
+ * @paironce/core 2.13.3: what the PairOnce protocol needs on each device, with no user interface and no service.
  * Frame encryption and key derivation, the live-transfer message formats, pairing cryptography (device session secret,
  * safety code, possession proofs), the binary file-chunk frame, chunk assembly and the receive window.
  * The protocol is described in https://github.com/paironce/protocol.
