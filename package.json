@@ -1,6 +1,6 @@
 {
   "name": "@paironce/core",
-  "version": "2.14.0",
+  "version": "2.14.1",
   "description": "PairOnce core: frame encryption, pairing cryptography and file-transfer framing used by paironce.com.",
   "license": "Apache-2.0",
   "type": "module",
