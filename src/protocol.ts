@@ -149,6 +149,7 @@ export const dataFrameSchema = z.discriminatedUnion("type", [
 export type SignalMessage = z.infer<typeof signalMessageSchema>;
 export type DataFrame = z.infer<typeof dataFrameSchema>;
 
+export * from './device-claim';
 
 export function parseSignalMessage(input: unknown): SignalMessage {
   const message = signalMessageSchema.parse(input);
