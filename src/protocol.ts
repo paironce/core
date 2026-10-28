@@ -84,10 +84,12 @@ export const signalMessageSchema = z.discriminatedUnion("type", [
 
 const idSchema = z.string().regex(/^[A-Za-z0-9_-]{16,128}$/);
 const encodedBytesSchema = z.string().regex(/^[A-Za-z0-9_-]+$/).max(256 * 1024);
+// Every frame's nonce prefix is 8 random bytes (createNoncePrefix), 11 characters; nothing longer is parsed (2.19.2, audit R04).
+const noncePrefixSchema = z.string().regex(/^[A-Za-z0-9_-]{11}$/);
 const encryptedControlSchema = z.object({
   v: z.literal(PROTOCOL_VERSION),
   transferId: idSchema,
-  noncePrefix: encodedBytesSchema,
+  noncePrefix: noncePrefixSchema,
   ciphertext: encodedBytesSchema,
   plainSize: z.number().int().positive().max(4096),
 });
@@ -110,7 +112,7 @@ export const dataFrameSchema = z.discriminatedUnion("type", [
     v: z.literal(PROTOCOL_VERSION),
     type: z.literal("text"),
     transferId: idSchema,
-    noncePrefix: encodedBytesSchema,
+    noncePrefix: noncePrefixSchema,
     ciphertext: encodedBytesSchema,
     plainSize: z.number().int().nonnegative().max(256 * 1024),
   }),
@@ -125,7 +127,7 @@ export const dataFrameSchema = z.discriminatedUnion("type", [
     size: z.number().int().nonnegative().max(MAX_FILE_BYTES),
     chunkSize: z.number().int().min(16 * 1024).max(64 * 1024),
     totalChunks: z.number().int().positive().max(MAX_FILE_CHUNKS),
-    noncePrefix: encodedBytesSchema,
+    noncePrefix: noncePrefixSchema,
     // Continuing a file the receiver kept after a dropped connection: chunks before this index are already there.
     // Optional, so a peer that predates it drops the key; a sender only sets it when the receiver asked for it.
     resumeFrom: z.number().int().positive().max(MAX_FILE_CHUNKS - 1).optional(),
