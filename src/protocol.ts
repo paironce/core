@@ -53,6 +53,9 @@ const helloSchema = z.object({
   // This device has PairOnce Pro. Files over 2 GB need Pro on one of the two devices; a direct transfer costs the service
   // nothing, so this is a plan boundary and the sender checks it.
   pro: z.literal(1).optional(),
+  // The service's signed pass for that Pro (pro-pass.ts, 2.19.1): the other device turns Pro on only with a valid one.
+  // Optional like the flags above: a peer that predates it drops the key.
+  proPass: z.string().regex(/^[A-Za-z0-9_-]{40,400}\.[A-Za-z0-9_-]{86}$/).optional(),
   // This side can show and watch a live picture (camera or screen) over this connection, set up by encrypted `live`
   // frames. Optional like the flags above: a peer that predates it drops the key and is never sent a `live` frame.
   liveMedia: z.literal(1).optional(),
@@ -150,6 +153,7 @@ export type SignalMessage = z.infer<typeof signalMessageSchema>;
 export type DataFrame = z.infer<typeof dataFrameSchema>;
 
 export * from './device-claim';
+export * from './pro-pass';
 
 export function parseSignalMessage(input: unknown): SignalMessage {
   const message = signalMessageSchema.parse(input);
