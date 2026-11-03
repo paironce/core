@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { progressDue, RECEIVE_STALL_MESSAGE, RECEIVE_WINDOW_CHUNKS, SendWindow } from "./receive-window";
 
-describe("receive window (2026-10-21 audit, F02)", () => {
+describe("receive window (2026-10-21)", () => {
   afterEach(() => { vi.useRealTimers(); });
 
   it("keeps the sender at most the window ahead of what the receiver handled", async () => {

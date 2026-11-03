@@ -1,5 +1,5 @@
 /**
- * A Pro pass (2.19.1, audit F02): the service's signature that a device, proven by its key, has PairOnce Pro until a
+ * A Pro pass (2.19.1): the service's signature that a device, proven by its key, has PairOnce Pro until a
  * time. A Pro device sends it in its hello; the other device checks it against the service's public key (/api/config,
  * `proPassKey`) and against the device it actually paired with, so `pro: 1` alone no longer turns Pro on for a peer.
  * The signature is ECDSA P-256 with SHA-256, in the raw r‖s form Web Crypto makes.

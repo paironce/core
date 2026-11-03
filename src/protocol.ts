@@ -84,7 +84,7 @@ export const signalMessageSchema = z.discriminatedUnion("type", [
 
 const idSchema = z.string().regex(/^[A-Za-z0-9_-]{16,128}$/);
 const encodedBytesSchema = z.string().regex(/^[A-Za-z0-9_-]+$/).max(256 * 1024);
-// Every frame's nonce prefix is 8 random bytes (createNoncePrefix), 11 characters; nothing longer is parsed (2.19.2, audit R04).
+// Every frame's nonce prefix is 8 random bytes (createNoncePrefix), 11 characters; nothing longer is parsed (2.19.2).
 const noncePrefixSchema = z.string().regex(/^[A-Za-z0-9_-]{11}$/);
 const encryptedControlSchema = z.object({
   v: z.literal(PROTOCOL_VERSION),

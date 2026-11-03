@@ -1,5 +1,5 @@
 /**
- * Application-level flow control for file chunks (2026-10-21 audit, F02).
+ * Application-level flow control for file chunks (2026-10-21).
  *
  * The data channel's own buffer only shows how fast the network takes bytes. A receiver that writes to a slow disk queues
  * every chunk it has not written yet in page memory, up to a whole 2 GB file. With the receive window the receiver reports,

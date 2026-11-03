@@ -1,5 +1,5 @@
 /**
- * A device proves it holds the ECDH key it claims (2.19.0, audit F01). The service keeps one ECDH key pair; the browser
+ * A device proves it holds the ECDH key it claims (2.19.0). The service keeps one ECDH key pair; the browser
  * combines its private key with the service's public key, the service its private key with the device's, and both get
  * the same MAC. The service grants Pro relay, spends relay packs and moves a device between licenses only for a device
  * that proved its key; a device ID alone is public and proves nothing.
