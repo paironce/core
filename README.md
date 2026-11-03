@@ -5,11 +5,12 @@ PairOnce — browser-to-browser file transfer between your devices. No app, no a
 [PairOnce](https://paironce.com) is a free web app for sending files, photos, text and links between your own devices
 (iPhone, Android, Windows, Mac, Linux) with no app to install and no account. The two browsers connect directly and
 end-to-end encrypted (AES-256-GCM, keys from P-256 ECDH, a 13-digit safety code to compare); when a network blocks a direct
-connection, an encrypted relay passes on data it cannot read. PairOnce keeps no copy. Overview: [github.com/paironce](https://github.com/paironce)
+connection, an encrypted relay passes on data it cannot read. Devices on the same Wi-Fi find each other on their own, and a
+large file resumes after a dropped connection. PairOnce keeps no copy. Overview: [github.com/paironce](https://github.com/paironce)
 · guides: [paironce.com/guides](https://paironce.com/guides/).
 
 This is the part of [PairOnce](https://paironce.com) that encrypts and moves your files, published so that the privacy
-claims can be checked rather than believed. paironce.com 2.20.1 runs exactly this code.
+claims can be checked rather than believed. paironce.com 2.20.2 runs exactly this code.
 
 | Module | What it does |
 | --- | --- |
@@ -33,7 +34,7 @@ npm run typecheck
 ```
 
 The package exports TypeScript source (`src/index.ts`) and needs Web Crypto (current browsers, Node 20+, Workers).
-It is not on npm yet; depend on this repository by tag (`github:paironce/core#v2.20.1`).
+It is not on npm yet; depend on this repository by tag (`github:paironce/core#v2.20.2`).
 
 ## Versions
 
