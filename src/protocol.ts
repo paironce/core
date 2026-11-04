@@ -63,6 +63,10 @@ const helloSchema = z.object({
   // connects. Optional like the flags above: a peer that predates it drops the key, and the tunnel is used only when both
   // hellos carry it.
   tunnel: z.literal(1).optional(),
+  // Agent as a Device v2 (protocol 2.3): this side is an AI agent, and how long the other device may keep it after it last
+  // connected (an hour to 30 days). Both only ever limit or mark the pairing; a peer that predates them drops the keys.
+  deviceKind: z.literal("agent").optional(),
+  forgetAfter: z.number().int().min(3600).max(30 * 86400).optional(),
 });
 
 export const signalMessageSchema = z.discriminatedUnion("type", [
