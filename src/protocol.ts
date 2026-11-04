@@ -70,6 +70,9 @@ const helloSchema = z.object({
   // Agent as a Device v3 (protocol 2.4): this side shows requests for a file, a photo or a scan and answers them. An
   // agent asks only a peer that sent it; a peer that predates it drops the key and is never asked.
   requests: z.literal(1).optional(),
+  // Agent as a Device v4 (protocol 2.5): this side also takes a request to watch (kind "watch") and, once the person
+  // shares their camera or screen for it, sends a still each time the asker asks. Optional like the flags above.
+  watch: z.literal(1).optional(),
 });
 
 export const signalMessageSchema = z.discriminatedUnion("type", [
@@ -186,12 +189,20 @@ export function parseDataFrame(input: unknown): DataFrame {
  * What a request frame carries (Agent as a Device v3, protocol 2.4). `ask`: what is wanted and why, in the asker's words
  * (plain text, shown as is). `answer`: declined, or how many files the answering side is about to offer, which the asker
  * may then take without asking again. `withdraw`: the asker no longer waits.
+ *
+ * Watching (v4, protocol 2.5), only with a peer whose hello carried `watch`: an `ask` of kind "watch" is answered
+ * "watch" once the person shares their camera or screen for it. The asker then sends `still` for each picture it wants;
+ * the other side announces the file it sends back (`still-file`), which the asker takes without asking. `stop` from
+ * either side ends it.
  */
-export const REQUEST_KINDS = ["file", "photo", "scan"] as const;
+export const REQUEST_KINDS = ["file", "photo", "scan", "watch"] as const;
 export const requestPayloadSchema = z.discriminatedUnion("op", [
   z.object({ op: z.literal("ask"), id: idSchema, kind: z.enum(REQUEST_KINDS), purpose: z.string().min(1).max(300) }).strict(),
-  z.object({ op: z.literal("answer"), id: idSchema, decision: z.enum(["decline", "send"]), count: z.number().int().min(1).max(20).optional() }).strict(),
+  z.object({ op: z.literal("answer"), id: idSchema, decision: z.enum(["decline", "send", "watch"]), count: z.number().int().min(1).max(20).optional() }).strict(),
   z.object({ op: z.literal("withdraw"), id: idSchema }).strict(),
+  z.object({ op: z.literal("still"), id: idSchema }).strict(),
+  z.object({ op: z.literal("still-file"), id: idSchema, transferId: idSchema }).strict(),
+  z.object({ op: z.literal("stop"), id: idSchema }).strict(),
 ]);
 export type RequestPayload = z.infer<typeof requestPayloadSchema>;
 export function parseRequestPayload(raw: string): RequestPayload {
