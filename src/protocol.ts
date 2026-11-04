@@ -59,6 +59,10 @@ const helloSchema = z.object({
   // This side can show and watch a live picture (camera or screen) over this connection, set up by encrypted `live`
   // frames. Optional like the flags above: a peer that predates it drops the key and is never sent a `live` frame.
   liveMedia: z.literal(1).optional(),
+  // This side can fall back to the WebSocket tunnel (2.22.0, protocol 2.2) when neither a direct path nor the TURN relay
+  // connects. Optional like the flags above: a peer that predates it drops the key, and the tunnel is used only when both
+  // hellos carry it.
+  tunnel: z.literal(1).optional(),
 });
 
 export const signalMessageSchema = z.discriminatedUnion("type", [
