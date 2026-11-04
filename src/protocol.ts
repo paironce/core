@@ -67,6 +67,9 @@ const helloSchema = z.object({
   // connected (an hour to 30 days). Both only ever limit or mark the pairing; a peer that predates them drops the keys.
   deviceKind: z.literal("agent").optional(),
   forgetAfter: z.number().int().min(3600).max(30 * 86400).optional(),
+  // Agent as a Device v3 (protocol 2.4): this side shows requests for a file, a photo or a scan and answers them. An
+  // agent asks only a peer that sent it; a peer that predates it drops the key and is never asked.
+  requests: z.literal(1).optional(),
 });
 
 export const signalMessageSchema = z.discriminatedUnion("type", [
@@ -116,6 +119,8 @@ export const dataFrameSchema = z.discriminatedUnion("type", [
   // Live picture set-up (live-media.ts): requests, answers, the renegotiation description and the DTLS fingerprint
   // check. Sent only to a peer whose hello carried liveMedia; a description is larger than the other control frames.
   encryptedControlSchema.extend({ type: z.literal("live"), plainSize: z.number().int().positive().max(32 * 1024) }),
+  // A request for a file, a photo or a scan, its answer or its withdrawal (Agent as a Device v3), inside the frame key.
+  encryptedControlSchema.extend({ type: z.literal("request") }),
   z.object({
     v: z.literal(PROTOCOL_VERSION),
     type: z.literal("text"),
@@ -175,4 +180,20 @@ export function parseSignalMessage(input: unknown): SignalMessage {
 }
 export function parseDataFrame(input: unknown): DataFrame {
   return dataFrameSchema.parse(input);
+}
+
+/**
+ * What a request frame carries (Agent as a Device v3, protocol 2.4). `ask`: what is wanted and why, in the asker's words
+ * (plain text, shown as is). `answer`: declined, or how many files the answering side is about to offer, which the asker
+ * may then take without asking again. `withdraw`: the asker no longer waits.
+ */
+export const REQUEST_KINDS = ["file", "photo", "scan"] as const;
+export const requestPayloadSchema = z.discriminatedUnion("op", [
+  z.object({ op: z.literal("ask"), id: idSchema, kind: z.enum(REQUEST_KINDS), purpose: z.string().min(1).max(300) }).strict(),
+  z.object({ op: z.literal("answer"), id: idSchema, decision: z.enum(["decline", "send"]), count: z.number().int().min(1).max(20).optional() }).strict(),
+  z.object({ op: z.literal("withdraw"), id: idSchema }).strict(),
+]);
+export type RequestPayload = z.infer<typeof requestPayloadSchema>;
+export function parseRequestPayload(raw: string): RequestPayload {
+  return requestPayloadSchema.parse(JSON.parse(raw));
 }
