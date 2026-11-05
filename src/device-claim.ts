@@ -29,6 +29,22 @@ function base64(value: ArrayBuffer): string {
 export const DEVICE_CLAIM_KEY_PATTERN = /^[A-Za-z0-9_-]{87}$/;
 export const DEVICE_CLAIM_PROOF_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 
+/**
+ * A device ID made since 2.29.0 comes from the device's key, so nobody can prove another key for it: knowing such an ID
+ * does not let anyone bind it to their own license first. IDs made earlier are random, and stay valid.
+ */
+export const KEY_DEVICE_ID_PREFIX = 'k1_';
+
+export async function deviceIdForKey(publicKey: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`paironce-device-id-v1:${publicKey}`));
+  return `${KEY_DEVICE_ID_PREFIX}${base64(digest).slice(0, 24)}`;
+}
+
+/** Whether a key can be this device's: any key for an older random ID, only its own for an ID made from a key. */
+export async function deviceIdFitsKey(deviceId: string, publicKey: string): Promise<boolean> {
+  return !deviceId.startsWith(KEY_DEVICE_ID_PREFIX) || deviceId === await deviceIdForKey(publicKey);
+}
+
 /** The MAC for a claim, from this side's private key and the other side's public key (the device's or the service's). */
 export async function deviceClaimProof(privateKey: CryptoKey, peerPublicKey: string, c: DeviceClaim): Promise<string> {
   if (privateKey.type !== 'private' || privateKey.algorithm.name !== 'ECDH' || !Number.isSafeInteger(c.issuedAt)
