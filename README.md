@@ -10,7 +10,7 @@ large file resumes after a dropped connection. PairOnce keeps no copy. Overview:
 · guides: [paironce.com/guides](https://paironce.com/guides/).
 
 This is the part of [PairOnce](https://paironce.com) that encrypts and moves your files, published so that the privacy
-claims can be checked rather than believed. paironce.com 2.31.0 runs exactly this code.
+claims can be checked rather than believed. paironce.com 2.31.1 runs exactly this code.
 
 | Module | What it does |
 | --- | --- |
@@ -34,7 +34,7 @@ npm run typecheck
 ```
 
 The package exports TypeScript source (`src/index.ts`) and needs Web Crypto (current browsers, Node 20+, Workers).
-It is not on npm yet; depend on this repository by tag (`github:paironce/core#v2.31.0`).
+It is not on npm yet; depend on this repository by tag (`github:paironce/core#v2.31.1`).
 
 ## Versions
 
